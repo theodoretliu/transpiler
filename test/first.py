@@ -1,4 +1,2 @@
-def f():
-    x = 1
-
-    y = 2
+def f(n):
+    return 1

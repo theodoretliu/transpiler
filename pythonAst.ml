@@ -1,5 +1,11 @@
 type identifier = string
-type constant = string
+type constant =
+| String of string
+| Int of int
+| NoneType
+| Ellipsis
+| Bool of bool
+
 
 type prog = stmt list
 
@@ -65,7 +71,7 @@ and expr =
 | Call of expr * expr list * keyword list
 | FormattedValue of expr * int option * expr option
 | JoinedStr of expr list
-| Constant of constant * string option
+| Constant of constant
 
 (* -- the following expression can appear in assignment context *)
 | Attribute of expr * identifier

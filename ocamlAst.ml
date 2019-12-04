@@ -3,6 +3,7 @@ type prog = stmt list
 and stmt =
 | Let of id * expr
 | FunctionDef of id * id list * expr * bool
+| Expr of expr
 
 and expr =
 | Var of id
@@ -14,21 +15,28 @@ and expr =
 | If of expr * expr * expr
 | Match of expr * (expr * expr) list
 | Apply of expr * expr
+| Tuple of expr list
+| List of expr list
 
 and constant =
 | Int of int
 | Float of float
 | Bool of bool
 | String of string
+| Unit
 
 and id = string
 
 and operator =
 | Add
 | Sub
+| Mult
+| Div
 | Cons
 | Append
 | Concat
+| And
+| Or
 
 and unop =
 | Not
@@ -72,7 +80,11 @@ let rec expr_to_string e indent use_newline =
     | Apply (e1, e2) ->
         let e1_s = expr_to_string e1 0 false in
         let e2_s = expr_to_string e2 0 false in
-        e1_s ^ " " ^ e2_s in
+        "(" ^ e1_s ^ ")" ^ " " ^ "(" ^ e2_s ^ ")"
+    | List l ->
+        "[" ^ (String.concat "; " (List.map (fun e -> expr_to_string e 0 false) l)) ^ "]"
+    | Tuple l ->
+        "(" ^ (String.concat ", " (List.map (fun e -> expr_to_string e 0 false) l)) ^ ")" in
   prefix ^ rest ^ (if use_newline then "\n" else "")
 
 and constant_to_string =
@@ -81,6 +93,7 @@ function
 | Float f -> string_of_float f
 | Bool b -> string_of_bool b
 | String s -> "\"" ^ s ^ "\""
+| Unit -> "()"
 
 and operator_to_string =
 function
@@ -89,9 +102,28 @@ function
 | Cons -> "::"
 | Append -> "@"
 | Concat -> "^"
+| Mult -> "*"
+| Div -> "/"
+| And -> "&&"
+| Or -> "||"
 
 and unop_to_string =
 function
 | Not -> "not"
 | Neg -> "~-"
 | Pos -> "~+"
+
+and stmt_to_string =
+  function
+  | Let (id, e) ->
+      "let " ^ id ^ " =\n" ^ (expr_to_string e 2 false) ^ " ;;\n"
+  | FunctionDef (id, args, e, isrec) ->
+      let isrec_string =
+        if isrec then "rec " else " " in
+      "let " ^ isrec_string ^ id ^ " " ^ (String.concat " " args) ^ " =\n"
+        ^ (expr_to_string e 2 false) ^ " ;;\n"
+  | Expr e ->
+      (expr_to_string e 0 false) ^ " ;;\n"
+
+and prog_to_string p =
+  List.map stmt_to_string p |> String.concat ""

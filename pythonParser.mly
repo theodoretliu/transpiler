@@ -69,7 +69,7 @@ open PythonAst
 %token NONE "None"
 %token TRUE "True"
 %token FALSE "False"
-%token <string> NUMBER
+%token <int> NUMBER
 %token <string> STRING
 %token FOR "for"
 %token ELSE "else"
@@ -347,12 +347,12 @@ let trailer :=
 
 let atom :=
 | s=NAME; { Name s }
-| s=NUMBER; { Constant (s, None) }
-| s=STRING+; { Constant (String.concat "" s, None) }
-| "..."; { Constant ("...", Some "Ellipsis") }
-| "None"; { Constant ("None", Some "None") }
-| "True"; { Constant ("True", Some "Bool") }
-| "False"; { Constant ("False", Some "Bool") }
+| s=NUMBER; { Constant (Int s) }
+| s=STRING+; { Constant (String (String.concat "" s)) }
+| "..."; { Constant Ellipsis }
+| "None"; { Constant NoneType }
+| "True"; { Constant (Bool true) }
+| "False"; { Constant (Bool false) }
 
 let subscriptlist :=
 | t=test; { Index t }

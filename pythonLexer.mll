@@ -146,7 +146,7 @@ let hexdigit = ['0'-'9'] | ['a'-'f'] | ['A'-'F']
 rule token = parse
 | eof { ENDMARKER }
 | character (digit | character | '_')* { create_token lexbuf }
-| digit+ { NUMBER (lexeme lexbuf) }
+| digit+ { NUMBER (int_of_string (lexeme lexbuf)) }
 | '\n'+ { new_line lexbuf; NEWLINE }
 | whitespace+
   { let distance = lexbuf.lex_curr_p.pos_cnum - lexbuf.lex_curr_p.pos_bol in

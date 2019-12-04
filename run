@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+res=$(../main.native $1)
+echo $res | ocamlformat - --name="tmp"
