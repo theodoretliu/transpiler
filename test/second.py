@@ -4,3 +4,5 @@ def f(l):
         s = s + x + 1
 
     return s
+
+x = 1

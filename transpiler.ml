@@ -9,7 +9,7 @@ let f =
     let rec f' lexbuf =
       match PythonLexer.token lexbuf with
       | SPACES i ->
-          let new_depth = i / 4 in
+          let new_depth = (i - 1) / 4 in
           let depth_delta = new_depth - !depth in
           depth := new_depth;
           if depth_delta < 0 then repeat ~-depth_delta PythonParser.DEDENT
@@ -85,6 +85,7 @@ and compile_stmt (s : PythonAst.stmt) : OcamlAst.stmt =
   match s with
   | Assign ([Name x], e) -> Let (x, compile_expr e)
   | Return (Some e) -> Expr (compile_expr e)
+  | Return (None) -> Expr (Constant Unit)
   | FunctionDef (f, args, body, [], None, None) ->
       let stmt_list = compile_prog body in
       let actual_body =

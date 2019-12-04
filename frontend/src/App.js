@@ -28,6 +28,22 @@ async function makeRequest(s, setCompiledCode) {
   setCompiledCode(res.compiled);
 }
 
+function trimLines(code) {
+  let splitted = code.split("\n");
+
+  let out = [];
+
+  for (let i = 0; i < splitted.length; ++i) {
+    let line = splitted[i].trimEnd();
+
+    if (line.length > 0) {
+      out.push(" " + splitted[i].trimEnd());
+    }
+  }
+
+  return out.join("\n");
+}
+
 const debouncedMakeRequest = _.debounce(makeRequest, 100);
 
 function App() {
@@ -36,7 +52,7 @@ function App() {
 
   function setAndRequest(code) {
     setCode(code);
-    debouncedMakeRequest(code, setCompiledCode);
+    debouncedMakeRequest(trimLines(code), setCompiledCode);
   }
 
   return (
