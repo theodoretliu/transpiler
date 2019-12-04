@@ -178,7 +178,7 @@ let parameters :=
     | Some s -> s }
 
 let typedargslist :=
-| n=NAME+; { n }
+| n=separated_nonempty_list(",", NAME); { n }
 
 /* let dotted_name :=
 | n=separated_nonempty_list(".", NAME); { n } */
